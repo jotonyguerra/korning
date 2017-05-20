@@ -29,7 +29,7 @@ CREATE TABLE frequencies (
 
 CREATE TABLE sales (
   id SERIAL PRIMARY KEY,
-  sale_date DATE,
+  sale_date VARCHAR(250),
   sale_amount VARCHAR(255),
   units_sold INTEGER,
   invoice_number INTEGER,
