@@ -80,19 +80,12 @@ end
 def add_sales
   CSV.foreach('sales.csv', headers: true) do |row|
     db_connection do |conn|
-
-      sale_date =  Date.strptime(row[3])
-      binding.pry
-
+      sale_date = Date.strptime(row[3], '%m/%d/%y')
       sale_amount = row[4]
       units = row[5]
-
       invoice_number = row[6]
-      query = "SELECT name FROM employees"
-      #how to access specific data from the tables? SELECT (element) FROM (table)<?
-
-      sql = "INSERT into sales VALUES ($1,$2,$3,$4)"
-      results = conn.exec_params(sql, [sale_date, sale_amount, units, invoice_number])
+      sql = "INSERT into sales (sale_date, sale_amount, units_sold, invoice_number) VALUES ($1,$2,$3,$4)"
+      conn.exec_params(sql, [sale_date, sale_amount, units, invoice_number])
     end
   end
 end
