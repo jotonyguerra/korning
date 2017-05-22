@@ -1,9 +1,9 @@
 -- DEFINE YOUR DATABASE SCHEMA HERE
-DROP TABLE IF EXISTS employees;
-DROP TABLE IF EXISTS customers;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS frequencies;
-DROP TABLE IF EXISTS sales;
+DROP TABLE IF EXISTS employees CASCADE;
+DROP TABLE IF EXISTS customers CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS frequencies CASCADE;
+DROP TABLE IF EXISTS sales CASCADE;
 
 CREATE TABLE employees (
   id SERIAL PRIMARY KEY,
@@ -36,5 +36,5 @@ CREATE TABLE sales (
   employee_id  INTEGER REFERENCES employees(id),
   customer_and_account_no_id INTEGER REFERENCES customers(id),
   product_id INTEGER REFERENCES products(id),
-  frequency_id INTEGER REFERENCES frequencies(id)
+  frequency_id VARCHAR(255)
 );

@@ -35,7 +35,7 @@ def add_customers
     db_connection do |conn|
 
       values = row[1].split(" ")
-      name = values[0..1].join(" ")
+      name = values[0]
       user_id = values[1]
       sql = "SELECT customer_name FROM customers WHERE customer_name=$1"
       results = conn.exec_params(sql, [name])
@@ -84,8 +84,32 @@ def add_sales
       sale_amount = row[4]
       units = row[5]
       invoice_number = row[6]
-      sql = "INSERT into sales (sale_date, sale_amount, units_sold, invoice_number) VALUES ($1,$2,$3,$4)"
-      conn.exec_params(sql, [sale_date, sale_amount, units, invoice_number])
+      frequency_id = row[-1]
+
+      #i should really refactor this....
+
+      values = row[0].split(" ")
+      employee_name = values[0..1].join(" ")
+
+      customer_values = row[1].split(" ")
+      customer_name = customer_values[0]
+      user_id = customer_values[1]
+      employee_id = conn.exec_params("SELECT id FROM employees WHERE name = '#{employee_name}'").to_a
+	    employee_id.each do |value|
+	      employee_id = value["id"]
+	    end
+      customer_id = conn.exec_params("SELECT id FROM customers WHERE customer_name = '#{customer_name}'").to_a
+      customer_id.each do |value|
+        customer_id = value["id"]
+      end
+      product_name= row[2]
+      product_id = conn.exec_params("SELECT id FROM products WHERE name = '#{product_name}'").to_a
+      product_id.each do |value|
+        product_id = value["id"]
+      end
+
+      sql = "INSERT into sales (sale_date, sale_amount, units_sold, invoice_number, employee_id, customer_and_account_no_id, product_id, frequency_id) VALUES ($1,$2,$3,$4,$5,$6,$7, $8)"
+      conn.exec_params(sql, [sale_date, sale_amount, units, invoice_number, employee_id, customer_id,product_id,frequency_id])
     end
   end
 end
@@ -94,21 +118,4 @@ add_customers
 add_products
 add_frequencies
 add_sales
-# How to structure this method to work??
-
-# def add_table(row_num, db_name,col_name)
-#   CSV.foreach('sales.csv', headers: true) do |row|
-#     db_connection do |conn|
-#
-#       values = row[row_num].split(" ")
-#       name = values[0..1].join(" ")
-#       user_id = values[1]
-#       sql = "SELECT customer_name FROM customers WHERE customer_name=$1"
-#       results = conn.exec_params(sql, [name])
-#       if results.to_a.empty?
-#         sql = "INSERT INTO customers (customer_name, account_no) VALUES ($1, $2)"
-#         results = conn.exec(sql, [name, user_id])
-#       end
-#     end
-#   end
-# end
+#probaly can get rid of each method bloc and do it in one bloc..
